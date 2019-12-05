@@ -5,7 +5,7 @@ import Transaction from './Transaction'
 
 
 // TODO setup websocket to listen for updates to transactions
-export default class OpenSales extends Component {
+export default class SalesView extends Component {
   state = {
     "Open": [],
     "Accepted": [],

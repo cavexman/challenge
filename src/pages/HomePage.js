@@ -2,9 +2,7 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import '../App.css';
 
-import OpenSales from './OpenSales'
-import AcceptedSales from './AcceptedSales'
-import SoldSales from './SoldSales'
+import SalesView from './SalesView'
 
 
 //the control for showing active view and switching to another view
@@ -53,21 +51,21 @@ export default class HomePage extends Component {
   render() {
     const views = {
       "Open" : {
-        "component" : OpenSales,
+        "component" : SalesView,
         "endpoint" : "/sales.json",
         "filter" : "Open",
         "button_label" : "Accept",
         "nextStatus" : "Accepted"
       },
       "Accepted" : {
-        "component" : OpenSales,    //react component as parent view
+        "component" : SalesView,    //react component as parent view
         "endpoint" : "/sales.json", //endpoint to load the view list
         "filter" : "Accepted",      //limit the view to transacations that match this status
         "button_label" : "Sell",    //to advance the transaction to next state, click this button
         "nextStatus" : "Sold"           //new state for transaction after clicking commit button
       },
       "Sold" : {
-        "component" : OpenSales,
+        "component" : SalesView,
         "endpoint" : "/sales.json",
         "filter" : "Sold",
         "button_label" : "", //sold view has no accept/sell button
