@@ -126,7 +126,7 @@ export default class Transaction extends Component {
                 {this.props.button_label}</button>
             }
           </div>
-          <Footer confirm={() => this.confirm()} /* this will bump state */
+          <Footer onEnter={() => this.confirm()} /* this will bump state */
                   update={(t) => this.setState({transaction: Object.assign(this.state.transaction, t)})}
                   {...this.props}/>
         </div>

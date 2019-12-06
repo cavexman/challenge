@@ -10,7 +10,10 @@ export default function Input(props) {
           className="field__input"
           name={props.name}
           placeholder={props.placeholder}
-          onChange={e => props.update( { [props.field]: e.target.value } ) }/>
+          onChange={e => props.update( { [props.field]: e.target.value } ) }
+          onKeyPress={e => e.key === 'Enter' && props.onEnter()}
+          />
+          
       </div>
     )  
 }
