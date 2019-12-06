@@ -1,3 +1,17 @@
+## Getting Started
+clone the project from github
+### `git clone https://github.com/cavexman/challenge.git`
+
+install dependancies
+### `yarn install`
+
+start the app
+### `yarn start`
+this should launch the app and open your web browser to the home page.
+
+### transactions json file
+copy the transactions file into the /public directory. Name the file "sales.json"
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts

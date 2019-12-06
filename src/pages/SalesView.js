@@ -3,31 +3,48 @@ import { Link } from 'react-router-dom'
 import axios from 'axios'
 import Transaction from './Transaction'
 
+function Loading(props){
+  return <div>Loading...</div>
+}
 
 // TODO setup websocket to listen for updates to transactions
 export default class SalesView extends Component {
+  // keep arrays for a local cache of transactions
   state = {
-    "Open": [],
-    "Accepted": [],
-    "Sold": [],
+    Open: [],
+    Accepted: [],
+    Sold: [],
+    err: "", //if set then show a message instead of Transaction component
+    loading: true //show a busy indicator while we wait for data load
   }
 
+  //TODO handle progressive load/pagination
   loadTransactions(){
-    axios.get(`${this.props.endpoint}`)
+    axios.get(`${this.props.endpoint}`, {timeout: 30000}) //30 sec timeout
     .then(res => {
-      //add an id to all transactions.
-      const transactions = res.data.map((e,i) => Object.assign({}, e, {"id" :  e.status + "-" + i})); //add an id to all transactions
+      // transform/validate data
+      const transactions = res.data.map((e,i) => {
+        // the sample json showed url without scheme, so I should anticipate a need to add the scheme, but feels goofy since it could be http or https, etc...
+        //check if url starts with http
+        if(e.imageUrl.substring(0,4) !== "http")
+          e.imageUrl = "http://" + e.imageUrl;
+        return Object.assign({}, e, {id :  e.status + "-" + i}); //add an id to all transactions
+      });
+      
       this.setState({ 
-        "Open": transactions.filter( sale => sale.status === "Open"),
-        "Accepted": transactions.filter( sale => sale.status === "Accepted"),
-        "Sold": transactions.filter( sale => sale.status === "Sold")
+        Open: transactions.filter( sale => sale.status === "Open"),
+        Accepted: transactions.filter( sale => sale.status === "Accepted"),
+        Sold: transactions.filter( sale => sale.status === "Sold"),
+        loading: false, //don't need the busy indicator, time to show the loaded data
        });
     })
+    .catch( err => {
+      this.setState({err: "Failed to load transaction list: " + err.code + "<br>" + err.message, loading: false}); //got an err, but loading has stopped
+    });
   }
 
   componentDidMount() {
-    //fetch transactions when component loaded
-    this.loadTransactions();
+    this.loadTransactions(); //fetch transactions when component loaded
   }
 
   //when you switch tabs, you might switch endpoints and want to refresh the list
@@ -48,44 +65,47 @@ export default class SalesView extends Component {
     this.state[sale.status].push(sale); //order doesn't matter so stick it on the end
 
 
-    this.setState({"status" : sale.status, "display" : "thumbnail--fadeout"}); 
+    this.setState({status : sale.status}); 
   }
 
   render() {
-    console.log(this.state[this.props.filter]);
-    //all the photos fit into a "row"
-    //let's try a two column layout
-    //TODO if we want continous scroll, we would fetch a new page of images and then we would evenly append Transactions to the end of odds/evens arrays
-    //we re-filter the list at render time just to rebalance the columns
-    const odds = this.state[this.props.filter].filter( (sale, i) => i%2 && sale.status === this.props.filter);
-    const evens = this.state[this.props.filter].filter( (sale, i) => !(i%2) && sale.status === this.props.filter);
-    return (
-      <div>
-        <div className="photo-container">
-          <div className="photo-row">
-            
-            <div className="photo-column">
-              { odds.map( (sale,i) => 
+    if(this.state.loading){
+      return <Loading/>
+    }else{
+      //all the photos fit into a "row"
+      //let's try a two column layout
+      //TODO if we want continous scroll, we would fetch a new page of images and then we would evenly append Transactions to the end of odds/evens arrays
+      //we re-filter the list at render time just to rebalance the columns
+      const evens = this.state[this.props.filter].filter( (sale, i) => i%2 && sale.status === this.props.filter); //the latter test for status coherency is probably not needed anymore
+      const odds = this.state[this.props.filter].filter( (sale, i) => !(i%2) && sale.status === this.props.filter);
+      return (
+        <div>
+          <div className="photo-container">
+            <div className="photo-row">
+              
+              <div className="photo-column">
+                { odds.map( (sale,i) => 
+                  <Transaction key={sale.id} 
+                    confirm={(sale) => this.confirm(sale)}
+                    sale={sale} 
+                    {...this.props}/> /* use the id to associate the input field with this object, if this was coming from the database I'd probably have a real id to use */
+                )}
+              </div>
+              
+              <div className="photo-column">
+                { evens.map( (sale, i) => 
                 <Transaction key={sale.id} 
                   confirm={(sale) => this.confirm(sale)}
                   sale={sale} 
-                  {...this.props}/> /* use the id to associate the input field with this object, if this was coming from the database I'd probably have a real id to use */
-              )}
-            </div>
-            
-            <div className="photo-column">
-              { evens.map( (sale, i) => 
-              <Transaction key={sale.id} 
-                confirm={(sale) => this.confirm(sale)}
-                sale={sale} 
-                {...this.props}/> /* use the id to associate the input field with this object */
-              )}
-            </div>
+                  {...this.props}/> /* use the id to associate the input field with this object */
+                )}
+              </div>
 
+            </div>
           </div>
         </div>
-      </div>
-    )
+      )
+    }
   }
 }
 

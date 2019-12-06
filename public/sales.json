@@ -1,7 +1,7 @@
 [
   {
     "name" : "Bob",
-    "imageUrl" : "https://images.snapwi.re/aa27/53765186d79bb29c37976335.w314.jpg",
+    "imageUrl" : "images.snapwi.re/aa27/53765186d79bb29c37976335.w314.jpg",
     "status" : "Open",
     "price" : "999.00",
     "transaction" : {}

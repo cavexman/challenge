@@ -4,81 +4,65 @@ import '../App.css';
 
 import SalesView from './SalesView'
 
+function Header(props){
+  return(
+    <div className="Header">
+      <img className="Header__logo" src="sw-logo-icon2x.png"/><span className="Header__title">Snapwire</span>
+    </div>
+  )
+}
 
 //the control for showing active view and switching to another view
-class Tab extends Component {
-  state = {
-
-  }
-
-  componentDidMount() {
-
-  }
-
-  render() {
-    const isActive = this.props.current_tab === this.props.label ? "tab--active" : "tab--inactive";
-    return(
-      <div className={"column tab " + isActive} onClick={() => this.props.switchtab(this.props.label)}>
-        <div><span className="tab__label">{this.props.label}</span></div>
-      </div>
-    )
-  }
+function Tab(props) {
+  const isActive = props.current_tab === props.label ? "tab--active" : "tab--inactive";
+  return(
+    <div className={"column tab " + isActive} onClick={() => props.switchtab(props.label)}>
+      <div><span className="tab__label">{props.label}</span></div>
+    </div>
+  )
 }
 
 export default class HomePage extends Component {
   
   state = {
-    "current_tab": "Open"
+    current_tab: "Open"
   }
   
   switchtab(target){
-    this.setState({"current_tab" : target});
+    this.setState({current_tab: target});
   }
 
-  componentDidMount() {
-      
-  }
-  
-  //   {
-  //     "name":"Bob",
-  //     "imageUrl":"www.sampleimage.com",
-  //     "status" : "Open",
-  //     "price" : "5.00",
-  //     "transaction": { }
-  //     }
   // TODO once I get the DB deployed I can switch to the laravel endpoint
   // `http://127.0.0.1:8000/api/transactions/Sold`
   render() {
     const views = {
-      "Open" : {
-        "component" : SalesView,
-        "endpoint" : "/sales.json",
-        "filter" : "Open",
-        "button_label" : "Accept",
-        "nextStatus" : "Accepted"
+      Open: {
+        component: SalesView,
+        endpoint: "/sales.json",
+        filter: "Open",
+        button_label: "Accept",
+        nextStatus: "Accepted"
       },
-      "Accepted" : {
-        "component" : SalesView,    //react component as parent view
-        "endpoint" : "/sales.json", //endpoint to load the view list
-        "filter" : "Accepted",      //limit the view to transacations that match this status
-        "button_label" : "Sell",    //to advance the transaction to next state, click this button
-        "nextStatus" : "Sold"           //new state for transaction after clicking commit button
+      Accepted: {
+        component: SalesView,    //react component as parent view
+        endpoint: "/sales.json", //endpoint to load the view list
+        filter: "Accepted",      //limit the view to transacations that match this status
+        button_label: "Sell",    //to advance the transaction to next state, click this button
+        nextStatus: "Sold"       //new state for transaction after clicking commit button
       },
-      "Sold" : {
-        "component" : SalesView,
-        "endpoint" : "/sales.json",
-        "filter" : "Sold",
-        "button_label" : "", //sold view has no accept/sell button
-        "nextStatus" : "" //no button, so no new state
+      Sold: {
+        component: SalesView,
+        endpoint: "/sales.json",
+        filter: "Sold",
+        button_label: "", //sold view has no accept/sell button
+        nextStatus: "" //no button, so no new state
       },
       
     };
     const ContentClass = views[this.state.current_tab].component;
     return (
       <div>
-        <div className="App-header">
-          <img src="sw-logo-icon2x.png"/><span>Snapwire</span>
-        </div>
+        <Header/>
 
         <div className="App-main_container">
 

@@ -2,47 +2,47 @@ import React, { Component } from 'react'
 import Input from './Input.js'
 
 // example transactions
-const open = {
-  "name":"Bob",
-  "imageUrl":"www.sampleimage.com",
-  "status" : "Open",
-  "price" : "5.00",
-  "transaction": { }
-}
+//  open = {
+//   "name":"Bob",
+//   "imageUrl":"www.sampleimage.com",
+//   "status" : "Open",
+//   "price" : "5.00",
+//   "transaction": { }
+// }
 
-const accepted = {
-  "name":"Bob",
-  "imageUrl":"www.sampleimage.com",
-  "status" : "Accepted",
-  "price" : "5.00",
-  "transaction": { }
-}
+//  accepted = {
+//   "name":"Bob",
+//   "imageUrl":"www.sampleimage.com",
+//   "status" : "Accepted",
+//   "price" : "5.00",
+//   "transaction": { }
+// }
 
-const sold = {
-  "name":"Bob",
-  "imageUrl":"www.sampleimage.com",
-  "status" : "Sold",
-  "price" : "5.00",
-  "transaction": {
-    "buyerName" : "Jim",
-    "salePrice" : "3.50"
-    }
-}
+//  sold = {
+//   "name":"Bob",
+//   "imageUrl":"www.sampleimage.com",
+//   "status" : "Sold",
+//   "price" : "5.00",
+//   "transaction": {
+//     "buyerName" : "Jim",
+//     "salePrice" : "3.50"
+//     }
+// }
 
 function Buyer(props){
   if(props.filter === "Accepted"){ //if we are displaying an accepted status, then we allow edit of buyer and price
     return(
       <div className="field-group">
-        <Input name={"buyerName"+props.id /* name field of input control must be unique */} 
-          field="buyerName" /* object key */
+        <Input name={"buyerName"+props.id} /* name field of input control must be unique */
+          field="buyerName" /* key into transaction object */
           style="field__buyer-name"
           label="Buyer&nbsp;:"
-          text={props.sale.buyerName /* editable content of the input */}
+          text={props.sale.buyerName}/* editable content of the input */
           placeholder="Buyer Name"
           update={(t) => this.setState(t)} 
           {...props}/>
         <Input name={"salePrice"+props.id} 
-          field="salePrice" /* object key */
+          field="salePrice" /* key into transaction object */
           style="field__sale-price"
           label="Price&nbsp;:"
           text={props.sale.salePrice}
@@ -79,29 +79,17 @@ function Footer(props){
       <Buyer {...props} />
     </div>
   )
-
 }
 
-function Watermark(){
-  return(
-    <div className="watermark">Sold</div>
-  )
-}
 
 export default class Transaction extends Component {
   //state for Input text input control
   //use state to store status so the Accept/Sell button can update state
   state = {
-    "status" : this.props.sale.status,
-    "transaction" : {
-      "buyerName" : "",
-      "salePrice" : ""
-    }
-  }
-
-  componentDidUpdate() {
-    if(this.state.display == "thumbnail--fadeout"){
-      setTimeout(() => this.setState({ "display" : "thumbnail--remove" }), 500);
+    status: this.props.sale.status,
+    transaction: {
+      buyerName: "",
+      salePrice: ""
     }
   }
 
@@ -116,7 +104,7 @@ export default class Transaction extends Component {
     //update transaction state
     //TODO UPDATE new state to server
     //for now we can console.log the new state
-    let sale = Object.assign({}, this.props.sale, {"status" : this.props.nextStatus}); //make a new object with new status
+    let sale = Object.assign({}, this.props.sale, {status: this.props.nextStatus}); //make a new object with new status
     if(this.state.transaction.buyerName) //only add transaction if we have data for it
       Object.assign(sale.transaction, this.state.transaction);
     this.outputSale(sale);
@@ -125,11 +113,11 @@ export default class Transaction extends Component {
 
   render() {
     //TODO normally we would trust the storage to only send us transactions that should be displayed
-    
+    //TODO do we need to show a placeholder img if the imageUrl is invalid?
       return(
-        <div className={"thumbnail " + this.state.display}>
+        <div className={"thumbnail"}>
           <div className="thumbnail__content">
-            <img src={`${this.props.sale.imageUrl}`}/>
+            <img src={`${this.props.sale.imageUrl}`}/> 
             {
               this.props.button_label === "" ? "" : 
                 <button className="thumbnail__confirm-button"
@@ -138,11 +126,9 @@ export default class Transaction extends Component {
             }
           </div>
           <Footer confirm={() => this.confirm() /* this will bump state */} 
-                  update={(t) => this.setState({"transaction" : Object.assign(this.state.transaction, t)})}
+                  update={(t) => this.setState({transaction: Object.assign(this.state.transaction, t)})}
                   {...this.props}/>
         </div>
       )
-    
-    
   }
 }
