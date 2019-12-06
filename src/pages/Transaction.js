@@ -35,7 +35,7 @@ function Buyer(props){
       <div className="field-group">
         <Input name={"buyerName"+props.id} /* name field of input control must be unique */
           field="buyerName" /* key into transaction object */
-          style="field__buyer-name"
+          field_type="field__buyer-name"
           label="Buyer&nbsp;:"
           text={props.sale.buyerName}/* editable content of the input */
           placeholder="Buyer Name"
@@ -43,7 +43,7 @@ function Buyer(props){
           {...props}/>
         <Input name={"salePrice"+props.id} 
           field="salePrice" /* key into transaction object */
-          style="field__sale-price"
+          field_type="field__sale-price"
           label="Price&nbsp;:"
           text={props.sale.salePrice}
           placeholder="Sale Price"
@@ -117,7 +117,8 @@ export default class Transaction extends Component {
       return(
         <div className={"thumbnail"}>
           <div className="thumbnail__content">
-            <img src={`${this.props.sale.imageUrl}`}/> 
+            <img src={`${this.props.sale.imageUrl}`} alt="" /* I'd like to give the alt something more useful */
+            />
             {
               this.props.button_label === "" ? "" : 
                 <button className="thumbnail__confirm-button"
@@ -125,7 +126,7 @@ export default class Transaction extends Component {
                 {this.props.button_label}</button>
             }
           </div>
-          <Footer confirm={() => this.confirm() /* this will bump state */} 
+          <Footer confirm={() => this.confirm()} /* this will bump state */
                   update={(t) => this.setState({transaction: Object.assign(this.state.transaction, t)})}
                   {...this.props}/>
         </div>
