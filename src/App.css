@@ -212,6 +212,11 @@
   display: flex;
 }
 
+.loading{
+  font-size: 20pt;
+  min-height: 75vh;
+  padding: 2rem;
+}
 
 @media screen and (max-width: 800px) {
   .photo-column {

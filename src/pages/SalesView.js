@@ -3,7 +3,16 @@ import axios from 'axios'
 import Transaction from './Transaction'
 
 function Loading(props){
-  return <div>Loading...</div>
+  if(props.err)
+    return (
+      <div className="loading">
+      <p>Make sure the transaction file is named sales.json</p>
+      <p>Make sure the transaction file is in the /public directory</p>
+      <p>{props.err}</p>
+      </div>
+    )
+  else
+    return <div className="loading">Loading...</div>
 }
 
 // TODO setup websocket to listen for updates to transactions
@@ -38,7 +47,8 @@ export default class SalesView extends Component {
        });
     })
     .catch( err => {
-      this.setState({err: "Failed to load transaction list: " + err.code + "<br>" + err.message, loading: false}); //got an err, but loading has stopped
+      console.log(err);
+      this.setState({err: "No transactions found: " + err.message, loading: true}); //got an err, but loading has stopped
     });
   }
 
@@ -69,7 +79,7 @@ export default class SalesView extends Component {
 
   render() {
     if(this.state.loading){
-      return <Loading/>
+      return <Loading err={this.state.err}/>
     }else{
       //all the photos fit into a "row"
       //let's try a two column layout
